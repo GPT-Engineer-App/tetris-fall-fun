@@ -76,7 +76,7 @@ const Tetris = () => {
   const isValidPosition = (shape, position) => {
     for (let row = 0; row < shape.length; row++) {
       for (let col = 0; col < shape[row].length; col++) {
-        if (shape[row][col] && (board[row + position.y] === undefined || board[row + position.y][col + position.x] === undefined || board[row + position.y][col + position.x])) {
+        if (shape[row][col] && (position.y + row >= BOARD_HEIGHT || position.x + col < 0 || position.x + col >= BOARD_WIDTH || board[row + position.y][col + position.x])) {
           return false;
         }
       }
@@ -124,10 +124,14 @@ const Tetris = () => {
   };
 
   const mergeShape = () => {
+    if (currentPosition.y < 0) {
+      setIsRunning(false);
+      return;
+    }
     const newBoard = [...board];
     for (let row = 0; row < currentShape.length; row++) {
       for (let col = 0; col < currentShape[row].length; col++) {
-        if (currentShape[row][col]) {
+        if (currentShape[row][col] && currentPosition.y + row < BOARD_HEIGHT) {
           newBoard[row + currentPosition.y][col + currentPosition.x] = currentShape[row][col];
         }
       }
